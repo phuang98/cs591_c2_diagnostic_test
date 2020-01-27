@@ -1,6 +1,7 @@
 # project/server/auth/views.py
 
 from flask import Blueprint, request, make_response, jsonify
+from flask import render_template
 from flask.views import MethodView
 
 from project.server import bcrypt, db
@@ -66,3 +67,14 @@ auth_blueprint.add_url_rule(
     view_func=registration_view,
     methods=['POST', 'GET']
 )
+
+
+@auth_blueprint.route('/users/index', methods=['GET'])
+def show_all():
+    ask = db.session.query(User.email)
+    execute_ask = db.session.execute(ask)
+    fetch_emails = execute_ask.fetchall()
+
+    return jsonify({'result': [dict(row) for row in fetch_emails]})
+
+
